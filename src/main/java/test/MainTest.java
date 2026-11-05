@@ -28,18 +28,33 @@ public class MainTest {
         machineService.create(hp);
 
         System.out.println("=== Persisted data ===");
+
         System.out.println("Rooms:");
-        for (Room r : roomService.getAll()) {
-            System.out.println("  " + r);
+        for (Room persistedRoom : roomService.getAll()) {
+            System.out.println("  Room{id=" + persistedRoom.getId()
+                    + ", code='" + persistedRoom.getCode()
+                    + "', label='" + persistedRoom.getLabel() + "'}");
         }
 
+        // The room association is LAZY, so the machines are read through a query
+        // executed while the Hibernate session is still open.
         System.out.println("Machines:");
-        for (Machine m : machineService.getAll()) {
-            System.out.println("  " + m + " -> room " + m.getRoom().getCode());
+        for (Room persistedRoom : roomService.getAll()) {
+            for (Machine machine : machineService.findByRoom(persistedRoom)) {
+                System.out.println("  Machine{id=" + machine.getId()
+                        + ", reference='" + machine.getReference()
+                        + "', brand='" + machine.getBrand() + "'}"
+                        + " -> room " + persistedRoom.getCode());
+            }
         }
 
-        System.out.println("Machines of brand Dell: " + machineService.findByBrand("Dell"));
-        System.out.println("Machines in room " + room.getCode() + ": " + roomService.countMachines(room.getId()));
+        List<Machine> dellMachines = machineService.findByBrand("Dell");
+        System.out.println("Machines of brand Dell: " + dellMachines.size());
+        for (Machine machine : dellMachines) {
+            System.out.println("  " + machine.getReference() + " / " + machine.getBrand());
+        }
+
+        System.out.println("Machines in room IT-01: " + roomService.countMachines(room.getId()));
         System.out.println("Data inserted successfully.");
     }
 }
