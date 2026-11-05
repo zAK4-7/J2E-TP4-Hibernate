@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<!--
+  Test configuration.
+  It reuses the same entities and mappings as production but runs against an
+  in-memory H2 database so the test suite needs no MySQL server.
+  HibernateUtil picks this file up through the "hibernate.config" system property.
+-->
+<hibernate-configuration>
+    <session-factory>
+        <property name="connection.driver_class">org.h2.Driver</property>
+        <property name="connection.url">jdbc:h2:mem:tp4_test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE</property>
+        <property name="connection.username">sa</property>
+        <property name="connection.password"></property>
+
+        <property name="dialect">org.hibernate.dialect.H2Dialect</property>
+        <property name="hbm2ddl.auto">create-drop</property>
+        <property name="show_sql">false</property>
+
+        <mapping class="entities.Room"/>
+        <mapping class="entities.Machine"/>
+    </session-factory>
+</hibernate-configuration>
